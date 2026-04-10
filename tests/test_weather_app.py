@@ -96,3 +96,16 @@ def test_disk_cache(monkeypatch, tmp_path):
     # Expire cache by using ttl=0
     data3 = weather_app.fetch_weather("CacheCity", ttl=0)
     assert data3["current_condition"][0]["temp_C"] == "99"
+
+
+def test_clear_cache(tmp_path):
+    import weather_app
+    p = tmp_path / ".weather_cache.json"
+    weather_app._CACHE_FILE = str(p)
+    # create a fake cache file
+    p.write_text('{"x": 1}', encoding="utf-8")
+    assert p.exists()
+    weather_app.clear_cache()
+    # either removed or emptied
+    if p.exists():
+        assert p.read_text(encoding="utf-8") in ("{}", "")

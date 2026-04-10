@@ -15,17 +15,28 @@ def index():
     weather = None
     city = ""
     error = None
+    message = None
     if request.method == "POST":
-        city = request.form.get("city", "").strip()
-        if not city:
-            error = "Please enter a city."
-        else:
+        # Clear cache action
+        if request.form.get("clear"):
             try:
-                data = fetch_weather(city)
-                weather = summarize(data, city)
+                from weather_app import clear_cache
+
+                clear_cache()
+                message = "Cache cleared."
             except Exception as e:
-                error = f"Error: {e}"
-    return render_template("index.html", weather=weather, city=city, error=error)
+                error = f"Error clearing cache: {e}"
+        else:
+            city = request.form.get("city", "").strip()
+            if not city:
+                error = "Please enter a city."
+            else:
+                try:
+                    data = fetch_weather(city)
+                    weather = summarize(data, city)
+                except Exception as e:
+                    error = f"Error: {e}"
+    return render_template("index.html", weather=weather, city=city, error=error, message=message)
 
 
 if __name__ == "__main__":

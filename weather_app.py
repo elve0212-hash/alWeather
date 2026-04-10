@@ -58,6 +58,20 @@ def _write_cache(d: dict) -> None:
         pass
 
 
+def clear_cache() -> None:
+    """Remove the cache file if it exists (best-effort)."""
+    path = _cache_path()
+    try:
+        if os.path.exists(path):
+            os.remove(path)
+    except Exception:
+        try:
+            # fallback: overwrite with empty dict
+            _write_cache({})
+        except Exception:
+            pass
+
+
 def fetch_weather(city: str, ttl: int = None) -> dict:
     """Fetch weather for a city, using a simple disk-backed TTL cache.
 
@@ -103,9 +117,14 @@ def summarize(data: dict, city: str) -> str:
 def main(argv=None):
     p = argparse.ArgumentParser(description="Simple weather lookup by city (wttr.in)")
     p.add_argument("--city", "-c", help="City name to lookup (e.g. London)")
+    p.add_argument("--clear-cache", dest="clear_cache", action="store_true", help="Clear disk cache and exit")
     args = p.parse_args(argv)
 
     city = args.city
+    if args.clear_cache:
+        clear_cache()
+        print("Cache cleared.")
+        sys.exit(0)
     if not city:
         try:
             city = input("Enter city: ").strip()
