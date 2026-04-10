@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "allweather"
+version = "0.1.0"
+description = "CLI and simple web UI to fetch current weather for a city (wttr.in)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [ { name = "elve" } ]
+dependencies = [
+  "requests>=2.0",
+  "flask>=2.0"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.scripts]
+allweather = "weather_app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
