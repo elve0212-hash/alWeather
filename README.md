@@ -1,5 +1,7 @@
 
+
 [![CI](https://github.com/elve0212-hash/alWeather/actions/workflows/ci.yml/badge.svg)](https://github.com/elve0212-hash/alWeather/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 # Weather CLI
 
