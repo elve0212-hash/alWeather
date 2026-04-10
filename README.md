@@ -1,3 +1,6 @@
+
+[![CI](https://github.com/elve0212-hash/alWeather/actions/workflows/ci.yml/badge.svg)](https://github.com/elve0212-hash/alWeather/actions)
+
 # Weather CLI
 
 Simple CLI to fetch current weather for a city using wttr.in (no API key required).
