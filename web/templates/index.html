@@ -32,6 +32,16 @@
       <input id="city" name="city" value="{{ city }}" placeholder="e.g. London" />
       <button type="submit">Get Weather</button>
     </form>
+
+    <div style="margin-top:0.75rem; display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1 1 220px">
+        <h3 style="margin:0 0 6px 0;font-size:1rem">Search History</h3>
+        <div id="historyList" style="background:#fff;padding:8px;border:1px solid #eee;border-radius:6px;min-height:48px">No recent searches</div>
+      </div>
+      <div style="flex:0 0 auto;align-self:flex-end">
+        <button id="clearHistory" type="button" class="secondary">Clear History</button>
+      </div>
+    </div>
     <form method="post" style="margin-top:0.5rem">
       <input type="hidden" name="clear" value="1" />
       <button type="submit" class="secondary">Clear Cache</button>
@@ -73,6 +83,54 @@
             this.textContent = 'Show Raw JSON';
           }
         });
+        // Search history (localStorage)
+        (function(){
+          const KEY = 'aw_history';
+          const maxItems = 8;
+          const historyEl = document.getElementById('historyList');
+          const clearBtn = document.getElementById('clearHistory');
+          const cityInput = document.getElementById('city');
+
+          function read(){
+            try{const s = localStorage.getItem(KEY); return s? JSON.parse(s): []}catch(e){return []}
+          }
+          function write(arr){ try{ localStorage.setItem(KEY, JSON.stringify(arr)); }catch(e){} }
+          function render(){
+            const arr = read();
+            if(!arr.length){ historyEl.textContent = 'No recent searches'; return }
+            historyEl.innerHTML = '';
+            arr.forEach(item=>{
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              btn.textContent = item;
+              btn.style.display = 'inline-block';
+              btn.style.margin = '4px';
+              btn.style.padding = '6px 8px';
+              btn.style.borderRadius = '6px';
+              btn.style.border = '1px solid #e6e6e6';
+              btn.style.background = '#fff';
+              btn.style.cursor = 'pointer';
+              btn.addEventListener('click', function(){ cityInput.value = item; cityInput.form.submit(); });
+              historyEl.appendChild(btn);
+            });
+          }
+          clearBtn.addEventListener('click', function(){ write([]); render(); });
+
+          // Add current city to history if present
+          const current = '{{ city | e }}';
+          if(current){
+            let arr = read();
+            // normalize
+            const norm = current.trim();
+            if(norm){
+              arr = arr.filter(x=> x.toLowerCase() !== norm.toLowerCase());
+              arr.unshift(norm);
+              if(arr.length>maxItems) arr = arr.slice(0,maxItems);
+              write(arr);
+            }
+          }
+          render();
+        })();
       </script>
     {% elif weather %}
       <h2>Result</h2>
