@@ -1,11 +1,12 @@
 import os
 import sys
 from flask import Flask, render_template, request
+import json
 
 # Ensure project root is on sys.path so imports work when running this file directly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from weather_app import fetch_weather, summarize
+from weather_app import fetch_weather, summarize, get_weather_details
 
 app = Flask(__name__, template_folder="templates")
 
@@ -34,9 +35,19 @@ def index():
                 try:
                     data = fetch_weather(city)
                     weather = summarize(data, city)
+                    details = get_weather_details(data, city)
+                    raw_json = json.dumps(data, indent=2)
                 except Exception as e:
                     error = f"Error: {e}"
-    return render_template("index.html", weather=weather, city=city, error=error, message=message)
+    return render_template(
+        "index.html",
+        weather=weather,
+        city=city,
+        error=error,
+        message=message,
+        weather_details=locals().get("details"),
+        raw_json=locals().get("raw_json"),
+    )
 
 
 if __name__ == "__main__":

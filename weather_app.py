@@ -114,6 +114,29 @@ def summarize(data: dict, city: str) -> str:
     return f"Weather in {city}: {desc}, {temp}°C — Humidity {humidity}% — Wind {wind} km/h"
 
 
+def get_weather_details(data: dict, city: str) -> dict:
+    """Return structured weather details extracted from wttr.in JSON."""
+    cur = data.get("current_condition", [{}])[0]
+    desc = ""
+    try:
+        desc = cur.get("weatherDesc", [{}])[0].get("value", "")
+    except Exception:
+        desc = ""
+
+    return {
+        "city": city,
+        "description": desc,
+        "temp_C": cur.get("temp_C", "?"),
+        "feels_like_C": cur.get("FeelsLikeC", cur.get("FeelsLikeF", "?")),
+        "humidity": cur.get("humidity", "?"),
+        "wind_kmph": cur.get("windspeedKmph", "?"),
+        "precip_mm": cur.get("precipMM", "?"),
+        "uv_index": cur.get("uvIndex", "?"),
+        "visibility": cur.get("visibility", "?"),
+        "raw": data,
+    }
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Simple weather lookup by city (wttr.in)")
     p.add_argument("--city", "-c", help="City name to lookup (e.g. London)")

@@ -26,7 +26,36 @@
       <p style="color:green">{{ message }}</p>
     {% endif %}
 
-    {% if weather %}
+    {% if weather_details %}
+      <h2>Result</h2>
+      <table style="border-collapse:collapse; width:100%">
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>City</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.city }}</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Condition</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.description }}</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Temperature</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.temp_C }} °C</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Feels Like</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.feels_like_C }} °C</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Humidity</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.humidity }}%</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Wind</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.wind_kmph }} km/h</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Precipitation</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.precip_mm }} mm</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>UV Index</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.uv_index }}</td></tr>
+        <tr><td style="padding:6px; border:1px solid #ddd"><strong>Visibility</strong></td><td style="padding:6px; border:1px solid #ddd">{{ weather_details.visibility }}</td></tr>
+      </table>
+      <div style="margin-top:8px">
+        <button id="toggleRaw">Show Raw JSON</button>
+        <pre id="rawJson" style="display:none;background:#f6f8fa;padding:8px;border:1px solid #eee;overflow:auto;max-height:300px">{{ raw_json or "" }}</pre>
+      </div>
+      <script>
+        document.getElementById('toggleRaw').addEventListener('click', function(){
+          const pre = document.getElementById('rawJson');
+          if(pre.style.display === 'none'){
+            pre.style.display = 'block';
+            this.textContent = 'Hide Raw JSON';
+          } else {
+            pre.style.display = 'none';
+            this.textContent = 'Show Raw JSON';
+          }
+        });
+      </script>
+    {% elif weather %}
       <h2>Result</h2>
       <p>{{ weather }}</p>
     {% endif %}
