@@ -4,7 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Weather Lookup</title>
-    <style>body{font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:2rem auto;padding:1rem}label,input{display:block;margin:0.5rem 0}button{margin-top:0.5rem}</style>
+    <style>
+      body{
+        font-family:Inter,system-ui,Arial,Helvetica,sans-serif;
+        max-width:740px;
+        margin:2rem auto;
+        padding:1rem;
+        background:#fbfbfc;
+        color:#111;
+      }
+      form{display:flex;flex-direction:column;gap:0.5rem}
+      label{font-weight:600}
+      input[type="text"], input, textarea{padding:8px;border:1px solid #dcdcdc;border-radius:6px;width:100%;box-sizing:border-box}
+      button{padding:8px 12px;border-radius:6px;border:none;background:#0069d9;color:#fff;cursor:pointer}
+      button.secondary{background:#6c757d}
+      table{border-collapse:collapse;width:100%;margin-top:0.5rem;background:#fff;border-radius:6px;overflow:hidden}
+      td{padding:10px;border-bottom:1px solid #f0f0f0}
+      td:first-child{width:35%;background:#fafafa;font-weight:600}
+      pre{background:#f6f8fa;padding:12px;border:1px solid #eee;overflow:auto;max-height:300px;border-radius:6px}
+      @media (max-width:480px){body{margin:1rem;padding:0.75rem}td{font-size:0.95rem}}
+    </style>
   </head>
   <body>
     <h1>Weather Lookup</h1>
@@ -15,7 +34,7 @@
     </form>
     <form method="post" style="margin-top:0.5rem">
       <input type="hidden" name="clear" value="1" />
-      <button type="submit">Clear Cache</button>
+      <button type="submit" class="secondary">Clear Cache</button>
     </form>
 
     {% if error %}
