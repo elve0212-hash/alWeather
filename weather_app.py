@@ -1,7 +1,9 @@
 import argparse
 import sys
 import re
-import functools
+import json
+import os
+import time
 import requests
 
 
@@ -24,13 +26,65 @@ def _raw_fetch_weather(city: str) -> dict:
     return resp.json()
 
 
-@functools.lru_cache(maxsize=128)
-def fetch_weather(city: str) -> dict:
-    """Normalized, cached fetch for a city name."""
+_CACHE_FILE = None
+_CACHE_TTL = 300  # seconds
+
+
+def _cache_path():
+    global _CACHE_FILE
+    if _CACHE_FILE:
+        return _CACHE_FILE
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), "."))
+    path = os.path.join(root, ".weather_cache.json")
+    _CACHE_FILE = path
+    return path
+
+
+def _read_cache() -> dict:
+    path = _cache_path()
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _write_cache(d: dict) -> None:
+    path = _cache_path()
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(d, f)
+    except Exception:
+        pass
+
+
+def fetch_weather(city: str, ttl: int = None) -> dict:
+    """Fetch weather for a city, using a simple disk-backed TTL cache.
+
+    `ttl` overrides the module default for tests.
+    """
     norm = _normalize_city(city)
     if not norm:
         raise ValueError("empty city")
-    return _raw_fetch_weather(norm)
+
+    if ttl is None:
+        ttl = _CACHE_TTL
+
+    now = int(time.time())
+    cache = _read_cache()
+    entry = cache.get(norm)
+    if entry:
+        ts = entry.get("ts", 0)
+        if now - ts < ttl:
+            return entry.get("data")
+
+    data = _raw_fetch_weather(norm)
+    try:
+        cache[norm] = {"ts": now, "data": data}
+        _write_cache(cache)
+    except Exception:
+        pass
+    return data
 
 
 def summarize(data: dict, city: str) -> str:
